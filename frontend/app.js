@@ -1,16 +1,22 @@
-const API_BASE = "https://satquery-ai-backend-cl3d.onrender.com";
-
-// ---------------- state ----------------
+const API_BASE = "http://localhost:8001";
 let currentMode = "single";
 let currentStep = "upload";
-let selectedFiles = {};     // slotIndex -> File
-let uploadedImageIds = [];  // parallel to slot indices
+let selectedFiles = {}; // slotIndex -> File
+let uploadedImageIds = []; // parallel to slot indices
 let rsAdapted = false;
 
 const MODE_CONFIG = {
-  single:      { slots: 1, titles: ["Image"], hints: ["single image"] },
-  cross_modal: { slots: 2, titles: ["Optical image", "SAR image"], hints: ["optical / multispectral", "synthetic aperture radar"] },
-  bi_temporal: { slots: 2, titles: ["Before", "After"], hints: ["earlier date", "later date"] },
+  single: { slots: 1, titles: ["Image"], hints: ["single image"] },
+  cross_modal: {
+    slots: 2,
+    titles: ["Optical image", "SAR image"],
+    hints: ["optical / multispectral", "synthetic aperture radar"],
+  },
+  bi_temporal: {
+    slots: 2,
+    titles: ["Before", "After"],
+    hints: ["earlier date", "later date"],
+  },
 };
 
 const EXAMPLES = {
@@ -36,7 +42,6 @@ const RUN_STEPS = [
   { key: "outputs_merged", label: "Merging outputs & scoring confidence" },
 ];
 
-// ---------------- element refs ----------------
 const statusBadge = document.getElementById("status-badge");
 const statusLabel = document.getElementById("status-label");
 const tmImages = document.getElementById("tm-images");
@@ -56,7 +61,6 @@ const runProgressSteps = document.getElementById("run-progress-steps");
 const resultWrap = document.getElementById("result-wrap");
 const errorPanel = document.getElementById("error-panel");
 
-// ---------------- toasts ----------------
 function toast(msg, type = "ok") {
   const stack = document.getElementById("toast-stack");
   const el = document.createElement("div");
@@ -65,8 +69,6 @@ function toast(msg, type = "ok") {
   stack.appendChild(el);
   setTimeout(() => el.remove(), 4200);
 }
-
-// ---------------- health check ----------------
 async function checkHealth() {
   try {
     const res = await fetch(`${API_BASE}/health`);
@@ -83,10 +85,11 @@ async function checkHealth() {
 }
 checkHealth();
 
-// ---------------- step navigation ----------------
 function goToStep(step) {
   currentStep = step;
-  document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
+  document
+    .querySelectorAll(".view")
+    .forEach((v) => v.classList.remove("active"));
   document.getElementById(`view-${step}`).classList.add("active");
   document.querySelectorAll(".step").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.step === step);
@@ -101,7 +104,11 @@ stepsNav.addEventListener("click", (e) => {
     toast("Upload image(s) first.", "err");
     return;
   }
-  if (target === "results" && resultWrap.classList.contains("hidden") && errorPanel.classList.contains("hidden")) {
+  if (
+    target === "results" &&
+    resultWrap.classList.contains("hidden") &&
+    errorPanel.classList.contains("hidden")
+  ) {
     toast("Run a query first.", "err");
     return;
   }
@@ -117,11 +124,12 @@ function markStepDone(step) {
   if (el) el.classList.add("done");
 }
 
-// ---------------- mode selection ----------------
 modeList.addEventListener("click", (e) => {
   const btn = e.target.closest(".mode-option");
   if (!btn) return;
-  document.querySelectorAll(".mode-option").forEach((b) => b.classList.remove("active"));
+  document
+    .querySelectorAll(".mode-option")
+    .forEach((b) => b.classList.remove("active"));
   btn.classList.add("active");
   currentMode = btn.dataset.mode;
   renderSlots();
@@ -134,7 +142,8 @@ function renderSlots() {
   [0, 1].forEach((i) => {
     const zone = document.querySelector(`.dropzone[data-slot="${i}"]`);
     zone.classList.toggle("hidden", i >= cfg.slots);
-    document.getElementById(`slot-title-${i}`).textContent = cfg.titles[i] || `Image ${i + 1}`;
+    document.getElementById(`slot-title-${i}`).textContent =
+      cfg.titles[i] || `Image ${i + 1}`;
     document.getElementById(`slot-hint-${i}`).textContent = cfg.hints[i] || "";
   });
   document.getElementById("compare-wrap").classList.add("hidden");
@@ -146,7 +155,10 @@ function renderExamples() {
     const chip = document.createElement("span");
     chip.className = "chip";
     chip.textContent = ex;
-    chip.onclick = () => { queryInput.value = ex; queryInput.focus(); };
+    chip.onclick = () => {
+      queryInput.value = ex;
+      queryInput.focus();
+    };
     exampleChips.appendChild(chip);
   });
 }
@@ -159,13 +171,14 @@ function resetUploadState() {
   [0, 1].forEach((i) => {
     document.getElementById(`preview-${i}`).innerHTML = "";
     document.getElementById(`meta-${i}`).innerHTML = "";
-    document.querySelector(`.dropzone[data-slot="${i}"]`).classList.remove("filled");
+    document
+      .querySelector(`.dropzone[data-slot="${i}"]`)
+      .classList.remove("filled");
     document.getElementById(`file-${i}`).value = "";
   });
   tmImages.textContent = "0";
 }
 
-// ---------------- upload slots: drag & drop + preview + metadata ----------------
 function fmtBytes(b) {
   if (b < 1024) return `${b} B`;
   if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
@@ -198,20 +211,30 @@ function handleFileForSlot(idx, file) {
 
   runBtn.disabled = true; // must re-upload after any file change
   uploadBtn.textContent = "Upload & continue";
-  document.querySelector(`.dropzone[data-slot="${idx}"]`).classList.remove("filled-uploaded");
+  document
+    .querySelector(`.dropzone[data-slot="${idx}"]`)
+    .classList.remove("filled-uploaded");
 }
 
 [0, 1].forEach((idx) => {
   const input = document.getElementById(`file-${idx}`);
   const zone = document.querySelector(`.dropzone[data-slot="${idx}"]`);
 
-  input.addEventListener("change", (e) => handleFileForSlot(idx, e.target.files[0]));
+  input.addEventListener("change", (e) =>
+    handleFileForSlot(idx, e.target.files[0]),
+  );
 
   ["dragenter", "dragover"].forEach((evt) =>
-    zone.addEventListener(evt, (e) => { e.preventDefault(); zone.classList.add("drag-over"); })
+    zone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      zone.classList.add("drag-over");
+    }),
   );
   ["dragleave", "drop"].forEach((evt) =>
-    zone.addEventListener(evt, (e) => { e.preventDefault(); zone.classList.remove("drag-over"); })
+    zone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      zone.classList.remove("drag-over");
+    }),
   );
   zone.addEventListener("drop", (e) => {
     const file = e.dataTransfer.files[0];
@@ -222,15 +245,18 @@ function handleFileForSlot(idx, file) {
   });
 });
 
-// ---------------- before/after compare slider (bi-temporal mode) ----------------
 function maybeUpdateCompareSlider(idx, url) {
   if (currentMode !== "bi_temporal") return;
   const wrap = document.getElementById("compare-wrap");
   if (idx === 0) document.getElementById("compare-img-b").src = url; // full underlay = "after" side visible by default
   if (idx === 1) document.getElementById("compare-img-a").src = url;
   if (selectedFiles[0] && selectedFiles[1]) {
-    document.getElementById("compare-img-b").src = URL.createObjectURL(selectedFiles[1]); // right/base = after
-    document.getElementById("compare-img-a").src = URL.createObjectURL(selectedFiles[0]); // left/clip = before
+    document.getElementById("compare-img-b").src = URL.createObjectURL(
+      selectedFiles[1],
+    ); // right/base = after
+    document.getElementById("compare-img-a").src = URL.createObjectURL(
+      selectedFiles[0],
+    ); // left/clip = before
     wrap.classList.remove("hidden");
   }
 }
@@ -246,7 +272,6 @@ compareRange.addEventListener("input", () => {
   document.getElementById("compare-img-a").style.width = `${sliderWidth}px`;
 });
 
-// ---------------- upload ----------------
 uploadBtn.addEventListener("click", async () => {
   const cfg = MODE_CONFIG[currentMode];
   const files = [];
@@ -263,7 +288,10 @@ uploadBtn.addEventListener("click", async () => {
   uploadBtn.textContent = "Uploading…";
   uploadBtn.disabled = true;
   try {
-    const res = await fetch(`${API_BASE}/api/upload`, { method: "POST", body: form });
+    const res = await fetch(`${API_BASE}/api/upload`, {
+      method: "POST",
+      body: form,
+    });
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
     uploadedImageIds = data.uploaded.map((u) => u.image_id);
@@ -281,11 +309,16 @@ uploadBtn.addEventListener("click", async () => {
   }
 });
 
-// ---------------- run query ----------------
 runBtn.addEventListener("click", async () => {
   const query = queryInput.value.trim();
-  if (!query) { toast("Type a question first.", "err"); return; }
-  if (uploadedImageIds.length === 0) { toast("Upload image(s) first.", "err"); return; }
+  if (!query) {
+    toast("Type a question first.", "err");
+    return;
+  }
+  if (uploadedImageIds.length === 0) {
+    toast("Upload image(s) first.", "err");
+    return;
+  }
 
   goToStep("results");
   resultWrap.classList.add("hidden");
@@ -299,11 +332,13 @@ runBtn.addEventListener("click", async () => {
     const res = await fetch(`${API_BASE}/api/query`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, image_ids: uploadedImageIds, input_mode: currentMode }),
+      body: JSON.stringify({
+        query,
+        image_ids: uploadedImageIds,
+        input_mode: currentMode,
+      }),
     });
     const data = await res.json();
-
-    // brief staged reveal of progress steps using the real trace, for legibility
     const seenSteps = (data.trace || []).map((t) => t.step);
     await animateProgress(seenSteps);
 
@@ -322,7 +357,8 @@ runBtn.addEventListener("click", async () => {
     }
   } catch (e) {
     runProgress.classList.add("hidden");
-    document.getElementById("error-text").textContent = "Request failed: " + e.message;
+    document.getElementById("error-text").textContent =
+      "Request failed: " + e.message;
     errorPanel.classList.remove("hidden");
     toast("Request failed.", "err");
   } finally {
@@ -359,8 +395,6 @@ function animateProgress(seenSteps) {
     tick();
   });
 }
-
-// ---------------- results rendering ----------------
 function confidenceBand(v) {
   if (v >= 0.7) return "high";
   if (v >= 0.35) return "medium";
@@ -382,7 +416,9 @@ function renderResult(data) {
   const grid = document.getElementById("evidence-grid");
   grid.innerHTML = "";
   const urls = data.evidence_urls || [];
-  document.getElementById("evidence-empty").classList.toggle("hidden", urls.length > 0);
+  document
+    .getElementById("evidence-empty")
+    .classList.toggle("hidden", urls.length > 0);
   urls.forEach((url) => {
     const img = document.createElement("img");
     img.src = `${API_BASE}${url}`;
@@ -395,12 +431,18 @@ function renderResult(data) {
   (data.trace || []).forEach((entry) => {
     const li = document.createElement("li");
     const { step, timestamp, ...rest } = entry;
-    const details = Object.entries(rest).map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join(" · ");
+    const details = Object.entries(rest)
+      .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+      .join(" · ");
     li.innerHTML = `<strong>${step.replace(/_/g, " ")}</strong>${details}`;
     traceList.appendChild(li);
   });
 
-  document.getElementById("trace-json").textContent = JSON.stringify(data, null, 2);
+  document.getElementById("trace-json").textContent = JSON.stringify(
+    data,
+    null,
+    2,
+  );
 
   const reportLink = document.getElementById("report-link");
   if (data.report_url) {
@@ -411,23 +453,24 @@ function renderResult(data) {
   }
 }
 
-// ---------------- tabs ----------------
 document.getElementById("tab-bar").addEventListener("click", (e) => {
   const btn = e.target.closest(".tab-btn");
   if (!btn) return;
-  document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
-  document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+  document
+    .querySelectorAll(".tab-btn")
+    .forEach((b) => b.classList.remove("active"));
+  document
+    .querySelectorAll(".tab-panel")
+    .forEach((p) => p.classList.remove("active"));
   btn.classList.add("active");
   document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
 });
 
-// ---------------- copy answer ----------------
 document.getElementById("copy-btn").addEventListener("click", () => {
   const text = document.getElementById("answer-text").textContent;
   navigator.clipboard.writeText(text).then(() => toast("Answer copied."));
 });
 
-// ---------------- reset session ----------------
 resetBtn.addEventListener("click", () => {
   resetUploadState();
   queryInput.value = "";
@@ -440,6 +483,23 @@ resetBtn.addEventListener("click", () => {
   toast("Session reset.");
 });
 
-// ---------------- init ----------------
 renderSlots();
 renderExamples();
+document.addEventListener("DOMContentLoaded", () => {
+  const landingPage = document.getElementById("landing-page");
+  const startButton = document.getElementById("start-btn");
+  const appShell = document.getElementById("app-shell");
+
+  if (!landingPage || !startButton || !appShell) {
+    return;
+  }
+
+  startButton.addEventListener("click", () => {
+    landingPage.classList.add("landing-hidden");
+
+    setTimeout(() => {
+      appShell.classList.add("active");
+      landingPage.style.display = "none";
+    }, 550);
+  });
+});
