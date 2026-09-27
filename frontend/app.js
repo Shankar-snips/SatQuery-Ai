@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8001";
+const API_BASE = "https://satquery-ai-backend-cl3d.onrender.com";
 
 // ---------------- state ----------------
 let currentMode = "single";
