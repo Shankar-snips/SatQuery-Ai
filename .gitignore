@@ -1,0 +1,51 @@
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python build
+build/
+dist/
+*.egg-info/
+
+# Large ML / satellite data
+*.tif
+*.tiff
+*.h5
+*.hdf5
+*.nc
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Generated/cache files
+.cache/
+
+# Runtime-generated SatQuery files
+backend/storage/uploads/*
+backend/storage/reports/*
+!backend/storage/uploads/.gitkeep
+!backend/storage/reports/.gitkeep
