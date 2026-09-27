@@ -1,222 +1,349 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>SatQuery-AI — Remote Sensing Vision-Language Assistant</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
+<section class="landing-page" id="landing-page">
+<div class="landing-grid"></div>
+<header class="landing-header">
+<div class="landing-brand">
+<div class="brand-orbit"><span></span></div>
+<strong>SatQuery-AI</strong>
+<div class="brand-divider"></div>
+<span class="brand-subtitle">Agentic Vision-Language Assistant for Remote Sensing</span>
+</div>
+<div class="landing-header-status">
+<span class="header-line"></span>
+SAT / AI
+</div>
+</header>
+<div class="landing-main">
+<div class="landing-content">
+<div class="landing-badge">
+<span class="landing-status-dot"></span>
+REMOTE SENSING INTELLIGENCE
+</div>
+<h1>
+Understand Earth.<br />
+<span>Ask Questions.</span>
+</h1>
+<p class="landing-description">
+SatQuery-AI is an agentic vision-language assistant designed to
+understand satellite imagery and answer natural-language questions
+about the Earth.
+</p>
+<div class="landing-tags">
+<span>OPTICAL</span>
+<span>SAR</span>
+<span>GEOTIFF</span>
+<span>CHANGE DETECTION</span>
+</div>
+<button class="start-btn" id="start-btn">
+<span>Start Analysis</span>
+<span class="start-arrow">→</span>
+</button>
+<div class="landing-meta">
+<strong>SatQuery-AI</strong>
+<span>•</span>
+<span>Remote Sensing Vision-Language Assistant</span>
+</div>
+</div>
+<div class="landing-visual">
+<div class="visual-glow"></div>
+<div class="orbit-ring ring-1"></div>
+<div class="orbit-ring ring-2"></div>
+<div class="orbit-ring ring-3"></div>
+<div class="rocket-image"></div>
+<div class="visual-data">
+<div class="visual-data-lines">
+<span>SATELLITE DATA</span>
+<span>→ ANALYSIS</span>
+<span>→ INSIGHTS</span>
+<span>→ A BETTER TOMORROW</span>
+</div>
+</div>
+</div>
+</div>
+<div class="landing-ready">
+<span></span>
+SYSTEM READY
+<i></i>
+</div>
+</section>
 
 <div class="toast-stack" id="toast-stack"></div>
 
 <header class="topbar">
-  <div class="brand">
-    <span class="orbit-mark" aria-hidden="true"><span class="orbit-dot"></span></span>
-    <div class="brand-text">
-      <h1>SatQuery-AI</h1>
-      <p>Agentic vision-language assistant for remote sensing · ISRO/SAC PS #26167</p>
-    </div>
-  </div>
-  <div class="status-pill" id="status-badge">
-    <span class="status-dot"></span><span id="status-label">connecting…</span>
-  </div>
+<div class="brand">
+<span class="orbit-mark" aria-hidden="true"><span class="orbit-dot"></span></span>
+<div class="brand-text">
+<h1>SatQuery-AI</h1>
+<p>Agentic vision-language assistant for remote sensing · ISRO/SAC PS #26167</p>
+</div>
+</div>
+<div class="status-pill" id="status-badge">
+<span class="status-dot"></span>
+<span id="status-label">connecting…</span>
+</div>
 </header>
 
-<div class="shell">
+<div class="shell app-shell" id="app-shell">
+<aside class="rail">
+<nav class="steps" id="steps-nav">
+<button class="step active" data-step="upload">
+<span class="step-index">1</span>
+<span class="step-label">Upload</span>
+</button>
+<button class="step" data-step="query">
+<span class="step-index">2</span>
+<span class="step-label">Query</span>
+</button>
+<button class="step" data-step="results">
+<span class="step-index">3</span>
+<span class="step-label">Analyze</span>
+</button>
+</nav>
 
-  <aside class="rail">
-    <nav class="steps" id="steps-nav">
-      <button class="step active" data-step="upload">
-        <span class="step-index">1</span>
-        <span class="step-label">Upload</span>
-      </button>
-      <button class="step" data-step="query">
-        <span class="step-index">2</span>
-        <span class="step-label">Query</span>
-      </button>
-      <button class="step" data-step="results">
-        <span class="step-index">3</span>
-        <span class="step-label">Analyze</span>
-      </button>
-    </nav>
-
-    <div class="rail-block">
-      <div class="rail-heading">Input mode</div>
-      <div class="mode-list" id="mode-list">
-        <button class="mode-option active" data-mode="single">
-          <span class="mode-icon">▣</span>
-          <span>
-            <strong>Single image</strong>
-            <small>VQA · captioning · grounding</small>
-          </span>
-        </button>
-        <button class="mode-option" data-mode="cross_modal">
-          <span class="mode-icon">◐</span>
-          <span>
-            <strong>Optical + SAR pair</strong>
-            <small>cross-modal fusion</small>
-          </span>
-        </button>
-        <button class="mode-option" data-mode="bi_temporal">
-          <span class="mode-icon">⇄</span>
-          <span>
-            <strong>Bi-temporal pair</strong>
-            <small>change detection</small>
-          </span>
-        </button>
-      </div>
-    </div>
-
-    <div class="rail-block">
-      <div class="rail-heading">Session</div>
-      <dl class="telemetry" id="session-telemetry">
-        <div><dt>Images loaded</dt><dd id="tm-images">0</dd></div>
-        <div><dt>RS adaptation</dt><dd id="tm-adapted">—</dd></div>
-        <div><dt>Last run</dt><dd id="tm-lastrun">—</dd></div>
-      </dl>
-      <button class="ghost-btn" id="reset-btn">Reset session</button>
-    </div>
-  </aside>
-
-  <main class="stage">
-
-    <!-- STEP 1: UPLOAD -->
-    <section class="view active" id="view-upload">
-      <div class="view-head">
-        <h2>Load imagery</h2>
-        <p>Drop real GeoTIFF/TIFF satellite imagery, or PNG/JPEG benchmark crops.</p>
-      </div>
-
-      <div class="upload-slots" id="upload-slots">
-        <div class="dropzone" data-slot="0">
-          <input type="file" accept=".tif,.tiff,.png,.jpg,.jpeg" data-slot-input="0" id="file-0" />
-          <label for="file-0" class="dropzone-inner">
-            <div class="dropzone-icon">↑</div>
-            <div class="dropzone-text">
-              <strong id="slot-title-0">Image A</strong>
-              <small id="slot-hint-0">single image</small>
-            </div>
-            <div class="dropzone-cta">Click or drag a file here</div>
-          </label>
-          <div class="slot-preview" id="preview-0"></div>
-          <div class="slot-meta" id="meta-0"></div>
-        </div>
-
-        <div class="dropzone hidden" data-slot="1">
-          <input type="file" accept=".tif,.tiff,.png,.jpg,.jpeg" data-slot-input="1" id="file-1" />
-          <label for="file-1" class="dropzone-inner">
-            <div class="dropzone-icon">↑</div>
-            <div class="dropzone-text">
-              <strong id="slot-title-1">Image B</strong>
-              <small id="slot-hint-1"></small>
-            </div>
-            <div class="dropzone-cta">Click or drag a file here</div>
-          </label>
-          <div class="slot-preview" id="preview-1"></div>
-          <div class="slot-meta" id="meta-1"></div>
-        </div>
-      </div>
-
-      <div class="compare-wrap hidden" id="compare-wrap">
-        <div class="compare-heading">Before / after preview</div>
-        <div class="compare-slider" id="compare-slider">
-          <img id="compare-img-b" alt="" />
-          <div class="compare-clip" id="compare-clip">
-            <img id="compare-img-a" alt="" />
-          </div>
-          <input type="range" min="0" max="100" value="50" id="compare-range" aria-label="Reveal before/after" />
-          <div class="compare-handle" id="compare-handle"></div>
-        </div>
-      </div>
-
-      <div class="view-actions">
-        <button class="primary-btn" id="upload-btn">Upload &amp; continue</button>
-      </div>
-    </section>
-
-    <!-- STEP 2: QUERY -->
-    <section class="view" id="view-query">
-      <div class="view-head">
-        <h2>Ask a question</h2>
-        <p>Plain-English queries are routed to the correct RS-adapted specialist tool automatically.</p>
-      </div>
-
-      <textarea id="query-input" rows="3" placeholder="e.g. Describe the land-cover and major objects visible in this image."></textarea>
-
-      <div class="chip-row" id="example-chips"></div>
-
-      <div class="view-actions">
-        <button class="ghost-btn" data-goto="upload">← Back</button>
-        <button class="primary-btn" id="run-btn" disabled>Run SatQuery-AI</button>
-      </div>
-    </section>
-
-    <!-- STEP 3: RESULTS -->
-    <section class="view" id="view-results">
-
-      <div class="run-progress hidden" id="run-progress">
-        <div class="scan-line"></div>
-        <div class="run-progress-steps" id="run-progress-steps"></div>
-      </div>
-
-      <div class="result-wrap hidden" id="result-wrap">
-        <div class="answer-card">
-          <div class="gauge" id="confidence-gauge" style="--pct:0">
-            <span class="gauge-value" id="gauge-value">0%</span>
-          </div>
-          <div class="answer-body">
-            <div class="answer-label">Agent response</div>
-            <p class="answer-text" id="answer-text"></p>
-            <div class="answer-actions">
-              <button class="link-btn" id="copy-btn">Copy answer</button>
-              <a class="link-btn" id="report-link" href="#" target="_blank" style="display:none;">Download PDF report</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="tabs">
-          <div class="tab-bar" id="tab-bar">
-            <button class="tab-btn active" data-tab="evidence">Visual evidence</button>
-            <button class="tab-btn" data-tab="trace">Execution trace</button>
-            <button class="tab-btn" data-tab="raw">Raw output</button>
-          </div>
-
-          <div class="tab-panel active" id="tab-evidence">
-            <div class="evidence-grid" id="evidence-grid"></div>
-            <p class="empty-note hidden" id="evidence-empty">No spatial evidence image for this task — see the answer above.</p>
-          </div>
-
-          <div class="tab-panel" id="tab-trace">
-            <ol class="trace-list" id="trace-list"></ol>
-          </div>
-
-          <div class="tab-panel" id="tab-raw">
-            <pre id="trace-json"></pre>
-          </div>
-        </div>
-      </div>
-
-      <div class="error-card hidden" id="error-panel">
-        <div class="error-icon">!</div>
-        <div>
-          <div class="error-title">Run failed</div>
-          <p id="error-text"></p>
-        </div>
-      </div>
-
-      <div class="view-actions">
-        <button class="ghost-btn" data-goto="query">← New question</button>
-      </div>
-    </section>
-
-  </main>
+<div class="rail-block">
+<div class="rail-heading">Input mode</div>
+<div class="mode-list" id="mode-list">
+<button class="mode-option active" data-mode="single">
+<span class="mode-icon">▣</span>
+<span>
+<strong>Single image</strong>
+<small>VQA · captioning · grounding</small>
+</span>
+</button>
+<button class="mode-option" data-mode="cross_modal">
+<span class="mode-icon">◐</span>
+<span>
+<strong>Optical + SAR pair</strong>
+<small>cross-modal fusion</small>
+</span>
+</button>
+<button class="mode-option" data-mode="bi_temporal">
+<span class="mode-icon">⇄</span>
+<span>
+<strong>Bi-temporal pair</strong>
+<small>change detection</small>
+</span>
+</button>
+</div>
 </div>
 
-<footer>SatQuery-AI · every query is routed by an agentic controller to an RS-adapted specialist model — never a single generic VLM call.</footer>
+<div class="rail-block">
+<div class="rail-heading">Session</div>
+<dl class="telemetry" id="session-telemetry">
+<div>
+<dt>Images loaded</dt>
+<dd id="tm-images">0</dd>
+</div>
+<div>
+<dt>RS adaptation</dt>
+<dd id="tm-adapted">—</dd>
+</div>
+<div>
+<dt>Last run</dt>
+<dd id="tm-lastrun">—</dd>
+</div>
+</dl>
+<button class="ghost-btn" id="reset-btn">Reset session</button>
+</div>
+</aside>
+
+<main class="stage">
+<section class="view active" id="view-upload">
+<div class="view-head">
+<h2>Load imagery</h2>
+<p>Drop real GeoTIFF/TIFF satellite imagery, or PNG/JPEG benchmark crops.</p>
+</div>
+
+<div class="upload-slots" id="upload-slots">
+<div class="dropzone" data-slot="0">
+<input type="file" accept=".tif,.tiff,.png,.jpg,.jpeg" data-slot-input="0" id="file-0" />
+<label for="file-0" class="dropzone-inner">
+<div class="dropzone-icon">↑</div>
+<div class="dropzone-text">
+<strong id="slot-title-0">Image A</strong>
+<small id="slot-hint-0">single image</small>
+</div>
+<div class="dropzone-cta">Click or drag a file here</div>
+</label>
+<div class="slot-preview" id="preview-0"></div>
+<div class="slot-meta" id="meta-0"></div>
+</div>
+
+<div class="dropzone hidden" data-slot="1">
+<input type="file" accept=".tif,.tiff,.png,.jpg,.jpeg" data-slot-input="1" id="file-1" />
+<label for="file-1" class="dropzone-inner">
+<div class="dropzone-icon">↑</div>
+<div class="dropzone-text">
+<strong id="slot-title-1">Image B</strong>
+<small id="slot-hint-1"></small>
+</div>
+<div class="dropzone-cta">Click or drag a file here</div>
+</label>
+<div class="slot-preview" id="preview-1"></div>
+<div class="slot-meta" id="meta-1"></div>
+</div>
+</div>
+
+<div class="compare-wrap hidden" id="compare-wrap">
+<div class="compare-heading">Before / after preview</div>
+<div class="compare-slider" id="compare-slider">
+<img id="compare-img-b" alt="" />
+<div class="compare-clip" id="compare-clip">
+<img id="compare-img-a" alt="" />
+</div>
+<input type="range" min="0" max="100" value="50" id="compare-range" aria-label="Reveal before/after" />
+<div class="compare-handle" id="compare-handle"></div>
+</div>
+</div>
+
+<div class="view-actions">
+<button class="primary-btn" id="upload-btn">Upload &amp; continue</button>
+</div>
+
+<div class="quick-analysis">
+<div class="quick-analysis-head">
+<div>
+<h3>Quick Analysis Overview</h3>
+<p>SatQuery-AI processing pipeline</p>
+</div>
+<span class="ready-badge">
+<span></span>
+READY
+</span>
+</div>
+
+<div class="analysis-cards">
+<div class="analysis-card">
+<div class="analysis-icon">◉</div>
+<div class="analysis-content">
+<span class="analysis-label">INPUT</span>
+<strong>Satellite imagery</strong>
+<small>GeoTIFF · TIFF · PNG · JPEG</small>
+</div>
+</div>
+
+<div class="analysis-card">
+<div class="analysis-icon">⚙</div>
+<div class="analysis-content">
+<span class="analysis-label">PROCESSING</span>
+<strong>Preflight + Agent Router</strong>
+<small>Metadata · CRS · GSD</small>
+</div>
+</div>
+
+<div class="analysis-card">
+<div class="analysis-icon">⌁</div>
+<div class="analysis-content">
+<span class="analysis-label">ANALYSIS</span>
+<strong>Specialist AI</strong>
+<small>VQA · Change Detection · SAR Fusion</small>
+</div>
+</div>
+
+<div class="analysis-card">
+<div class="analysis-icon">✓</div>
+<div class="analysis-content">
+<span class="analysis-label">OUTPUT</span>
+<strong>Mission Intelligence</strong>
+<small>Answer · Evidence · Trace</small>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="view" id="view-query">
+<div class="view-head">
+<h2>Ask a question</h2>
+<p>Plain-English queries are routed to the correct RS-adapted specialist tool automatically.</p>
+</div>
+
+<textarea id="query-input" rows="3" placeholder="e.g. Describe the land-cover and major objects visible in this image."></textarea>
+<div class="chip-row" id="example-chips"></div>
+
+<div class="view-actions">
+<button class="ghost-btn" data-goto="upload">← Back</button>
+<button class="primary-btn" id="run-btn" disabled>Run SatQuery-AI</button>
+</div>
+</section>
+
+<section class="view" id="view-results">
+<div class="run-progress hidden" id="run-progress">
+<div class="scan-line"></div>
+<div class="run-progress-steps" id="run-progress-steps"></div>
+</div>
+
+<div class="result-wrap hidden" id="result-wrap">
+<div class="answer-card">
+<div class="gauge" id="confidence-gauge" style="--pct: 0">
+<span class="gauge-value" id="gauge-value">0%</span>
+</div>
+
+<div class="answer-body">
+<div class="answer-label">Agent response</div>
+<p class="answer-text" id="answer-text"></p>
+<div class="answer-actions">
+<button class="link-btn" id="copy-btn">Copy answer</button>
+<a class="link-btn" id="report-link" href="#" target="_blank" style="display: none">Download PDF report</a>
+</div>
+</div>
+</div>
+
+<div class="tabs">
+<div class="tab-bar" id="tab-bar">
+<button class="tab-btn active" data-tab="evidence">Visual evidence</button>
+<button class="tab-btn" data-tab="trace">Execution trace</button>
+<button class="tab-btn" data-tab="raw">Raw output</button>
+</div>
+
+<div class="tab-panel active" id="tab-evidence">
+<div class="evidence-grid" id="evidence-grid"></div>
+<p class="empty-note hidden" id="evidence-empty">
+No spatial evidence image for this task — see the answer above.
+</p>
+</div>
+
+<div class="tab-panel" id="tab-trace">
+<ol class="trace-list" id="trace-list"></ol>
+</div>
+
+<div class="tab-panel" id="tab-raw">
+<pre id="trace-json"></pre>
+</div>
+</div>
+</div>
+
+<div class="error-card hidden" id="error-panel">
+<div class="error-icon">!</div>
+<div>
+<div class="error-title">Run failed</div>
+<p id="error-text"></p>
+</div>
+</div>
+
+<div class="view-actions">
+<button class="ghost-btn" data-goto="query">← New question</button>
+</div>
+</section>
+</main>
+</div>
+
+<footer>
+SatQuery-AI · every query is routed by an agentic controller to an
+RS-adapted specialist model — never a single generic VLM call.
+</footer>
 
 <script src="app.js"></script>
 </body>
