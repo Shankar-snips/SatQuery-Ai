@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8001";
+const API_BASE = "http://localhost:8000";
 let currentMode = "single";
 let currentStep = "upload";
 let selectedFiles = {}; // slotIndex -> File
