@@ -49,3 +49,6 @@ backend/storage/uploads/*
 backend/storage/reports/*
 !backend/storage/uploads/.gitkeep
 !backend/storage/reports/.gitkeep
+
+# pem
+satquery-key.pem
