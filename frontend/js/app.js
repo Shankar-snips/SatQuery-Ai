@@ -1,4 +1,4 @@
-const API_BASE = "https://satquery-ai-backend-oawm.onrender.com";
+const API_BASE = "";
 let currentMode = "single";
 let currentStep = "upload";
 let selectedFiles = {}; // slotIndex -> File
